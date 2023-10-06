@@ -16,4 +16,21 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext("Luna", "Izzy", "Keira")
                 .verifyComplete();
     }
+
+    @Test
+    void namesMapFlux() {
+        var namesUpper = fluxAndMonoGeneratorService.namesMapFlux();
+        StepVerifier.create(namesUpper)
+                .expectNext("LUNA", "IZZY", "KEIRA")
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFilterAndFlatMapAsync() {
+        var res = fluxAndMonoGeneratorService.namesFilterAndFlatMapAsync(3);
+        StepVerifier.create(res)
+//                .expectNext("L", "U", "N", "A", "I", "Z", "Z", "Y", "K", "E", "I", "R", "A")
+                .expectNextCount(13)
+                .verifyComplete();
+    }
 }
