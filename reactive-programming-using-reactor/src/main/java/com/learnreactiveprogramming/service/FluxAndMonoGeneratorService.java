@@ -1,11 +1,13 @@
 package com.learnreactiveprogramming.service;
 
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class FluxAndMonoGeneratorService {
@@ -27,8 +29,35 @@ public class FluxAndMonoGeneratorService {
         return Flux.fromIterable(Arrays.asList("luna", "izzy", "keira", "mel"))
                 .filter(name -> name.length() > length)
                 .map(String::toUpperCase)
+                // use .concatMap if order needs to be preserved
                 .flatMap(name -> splitStrFlux(name))
                 .log();
+    }
+
+    public Mono<List<String>> namesMonoFlatMap(final int length) {
+        return Mono.just("Keira")
+                .map(String::toUpperCase)
+                .filter(str -> str.length() > length)
+                .flatMap(this::splitStrMono)
+                .log();
+    }
+
+    public Flux<String> namesMonoFlatMapMany(final int length) {
+        return Mono.just("Keira")
+                .map(String::toUpperCase)
+                .filter(str -> str.length() > length)
+                .flatMapMany(this::splitStr)
+                .log();
+    }
+
+    private Flux<String> splitStr(final String str) {
+        var charArr = str.split("");
+        return Flux.fromArray(charArr);
+    }
+
+    private Mono<List<String>> splitStrMono(final String str) {
+        var charArr = str.split("");
+        return Mono.just(List.of(charArr));
     }
 
     private Flux<String> splitStrFlux(final String str) {
