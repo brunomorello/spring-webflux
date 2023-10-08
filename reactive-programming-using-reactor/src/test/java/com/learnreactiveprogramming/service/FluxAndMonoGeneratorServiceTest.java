@@ -51,4 +51,28 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext("K", "E", "I", "R", "A")
                 .verifyComplete();
     }
+
+    @Test
+    void namesFilterAndFlatMapAsyncWithTransform() {
+        var res = fluxAndMonoGeneratorService.namesFilterAndFlatMapAsyncWithTransform(3);
+        StepVerifier.create(res)
+                .expectNextCount(13)
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFilterAndFlatMapAsyncWithTransformEmpty() {
+        var res = fluxAndMonoGeneratorService.namesFilterAndFlatMapAsyncWithTransform(6);
+        StepVerifier.create(res)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFilterAndFlatMapAsyncWithTransformEmptySwitchIfEmpty() {
+        var res = fluxAndMonoGeneratorService.namesFilterAndFlatMapAsyncWithTransformEmpty(6);
+        StepVerifier.create(res)
+                .expectNextCount(7)
+                .verifyComplete();
+    }
 }

@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 public class FluxAndMonoGeneratorService {
     public Flux<String> namesFlux() {
@@ -31,6 +32,32 @@ public class FluxAndMonoGeneratorService {
                 .map(String::toUpperCase)
                 // use .concatMap if order needs to be preserved
                 .flatMap(name -> splitStrFlux(name))
+                .log();
+    }
+
+    public Flux<String> namesFilterAndFlatMapAsyncWithTransform(final int length) {
+
+        Function<Flux<String>, Flux<String>> filterAndMapFunc = str -> str.filter(name -> name.length() > length)
+                .map(String::toUpperCase)
+                .flatMap(this::splitStrFlux);
+
+        return Flux.fromIterable(Arrays.asList("luna", "izzy", "keira", "mel"))
+                .transform(filterAndMapFunc)
+                .defaultIfEmpty("default")
+                .log();
+    }
+
+    public Flux<String> namesFilterAndFlatMapAsyncWithTransformEmpty(final int length) {
+
+        Function<Flux<String>, Flux<String>> filterAndMapFunc = str -> str.filter(name -> name.length() > length)
+                .map(String::toUpperCase)
+                .flatMap(this::splitStrFlux);
+
+        var defaultEmpty = Flux.just("default").transform(filterAndMapFunc);
+
+        return Flux.fromIterable(Arrays.asList("luna", "izzy", "keira", "mel"))
+                .transform(filterAndMapFunc)
+                .switchIfEmpty(defaultEmpty)
                 .log();
     }
 
