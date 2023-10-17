@@ -75,4 +75,31 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNextCount(7)
                 .verifyComplete();
     }
+
+    @Test
+    void testExploreConcat() {
+        var res = fluxAndMonoGeneratorService.exploreConcat();
+        StepVerifier.create(res)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+
+    }
+
+    @Test
+    void testExploreConcatWith() {
+        var res = fluxAndMonoGeneratorService.exploreContactWith();
+        StepVerifier.create(res)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+
+    }
+
+    @Test
+    void testExploreConcatWithMono() {
+        var res = fluxAndMonoGeneratorService.exploreConcatWithMono();
+        StepVerifier.create(res)
+                .expectNext("A", "B")
+                .verifyComplete();
+
+    }
 }
