@@ -124,6 +124,42 @@ public class FluxAndMonoGeneratorService {
         return Flux.mergeSequential(abcFlux, defFlux).log();
     }
 
+    public Flux<String> exploreZip() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(150));
+
+        return Flux.zip(abcFlux, defFlux, (first, second) -> first+second).log();
+    }
+
+    public Flux<String> exploreZipTupple() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(150));
+        var flux123 = Flux.just("1", "2", "3");
+        var flux456 = Flux.just("4", "5", "6");
+
+        return Flux.zip(abcFlux, defFlux, flux123, flux456)
+                .map(t4 -> t4.getT1()+t4.getT2()+t4.getT3()+t4.getT4())
+                .log();
+    }
+
+    public Flux<String> exploreZipWith() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(150));
+        return abcFlux.zipWith(defFlux, (first, second) -> first+second).log();
+    }
+
+    public Mono<String> exploreZipWithMono() {
+        var aMono = Mono.just("A");
+        var bMono = Mono.just("B");
+        return aMono.zipWith(bMono, (first, second) -> first+second).log();
+    }
+
     private Flux<String> splitStr(final String str) {
         var charArr = str.split("");
         return Flux.fromArray(charArr);
