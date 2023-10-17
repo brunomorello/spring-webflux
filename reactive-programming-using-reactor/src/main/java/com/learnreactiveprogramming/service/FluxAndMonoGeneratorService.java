@@ -157,7 +157,8 @@ public class FluxAndMonoGeneratorService {
     public Mono<String> exploreZipWithMono() {
         var aMono = Mono.just("A");
         var bMono = Mono.just("B");
-        return aMono.zipWith(bMono, (first, second) -> first+second).log();
+        return aMono.zipWith(bMono)
+                .map(t2 -> t2.getT1()+ t2.getT2()).log();
     }
 
     private Flux<String> splitStr(final String str) {
